@@ -4,11 +4,15 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../../data/models/activity.dart';
 import '../../data/repositories/activity_repository.dart';
 import '../../data/services/location_service.dart';
+import '../../data/services/health_service.dart';
+import '../../data/services/settings_service.dart';
 import '../../core/constants/app_constants.dart';
 
 class RunningProvider extends ChangeNotifier {
   final ActivityRepository _repository;
   final LocationService _locationService;
+  final HealthService _healthService;
+  final SettingsService _settingsService;
 
   Activity? _currentActivity;
   LatLng? _currentLocation;
@@ -21,8 +25,12 @@ class RunningProvider extends ChangeNotifier {
   RunningProvider({
     ActivityRepository? repository,
     LocationService? locationService,
+    HealthService? healthService,
+    SettingsService? settingsService,
   })  : _repository = repository ?? ActivityRepository(),
-        _locationService = locationService ?? LocationService();
+        _locationService = locationService ?? LocationService(),
+        _healthService = healthService ?? HealthService(),
+        _settingsService = settingsService ?? SettingsService();
 
   Activity? get currentActivity => _currentActivity;
   LatLng? get currentLocation => _currentLocation;
@@ -110,9 +118,10 @@ class RunningProvider extends ChangeNotifier {
     _locationSubscription?.cancel();
 
     final steps = (currentDistanceMeters / AppConstants.metersPerStep).round();
+    final endTime = DateTime.now();
 
     final completedActivity = _currentActivity!.copyWith(
-      endTime: DateTime.now(),
+      endTime: endTime,
       distanceMeters: currentDistanceMeters,
       duration: _elapsed,
       caloriesBurned: currentCalories,
@@ -124,6 +133,17 @@ class RunningProvider extends ChangeNotifier {
     );
 
     await _repository.saveActivity(completedActivity);
+
+    // Write workout to HealthKit if enabled
+    final healthKitEnabled = await _settingsService.isHealthKitEnabled();
+    if (healthKitEnabled) {
+      await _healthService.writeWorkout(
+        start: completedActivity.startTime,
+        end: endTime,
+        distanceMeters: completedActivity.distanceMeters,
+        caloriesBurned: completedActivity.caloriesBurned,
+      );
+    }
 
     _currentActivity = null;
     _routePoints = [];

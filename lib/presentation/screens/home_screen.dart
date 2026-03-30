@@ -4,6 +4,7 @@ import '../../core/theme/app_theme.dart';
 import 'dashboard/dashboard_screen.dart';
 import 'live_map/live_map_screen.dart';
 import 'activity_history/activity_history_screen.dart';
+import 'settings/settings_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -19,6 +20,7 @@ class _HomeScreenState extends State<HomeScreen> {
     DashboardScreen(),
     LiveMapScreen(),
     ActivityHistoryScreen(),
+    SettingsScreen(),
   ];
 
   @override
@@ -60,6 +62,10 @@ class _HomeScreenState extends State<HomeScreen> {
               BottomNavigationBarItem(
                 icon: Icon(Icons.history_rounded),
                 label: 'History',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.settings_rounded),
+                label: 'Settings',
               ),
             ],
           ),

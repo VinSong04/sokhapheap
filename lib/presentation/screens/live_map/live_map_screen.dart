@@ -5,6 +5,7 @@ import '../../../core/constants/app_constants.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/utils/formatters.dart';
 import '../../providers/running_provider.dart';
+import '../run_summary/run_summary_screen.dart';
 
 class LiveMapScreen extends StatefulWidget {
   const LiveMapScreen({super.key});
@@ -232,12 +233,9 @@ class _LiveMapScreenState extends State<LiveMapScreen> {
                 final activity =
                     await context.read<RunningProvider>().stopRun();
                 if (activity != null && context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(
-                        'Run completed! ${Formatters.formatDistance(activity.distanceMeters)} in ${Formatters.formatDuration(activity.duration)}',
-                      ),
-                      backgroundColor: AppTheme.secondaryColor,
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => RunSummaryScreen(activity: activity),
                     ),
                   );
                 }

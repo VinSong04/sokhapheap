@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/utils/formatters.dart';
-import '../../../core/constants/app_constants.dart';
 import '../../providers/dashboard_provider.dart';
 import '../../widgets/gradient_progress_ring.dart';
 import '../../widgets/weekly_chart.dart';
@@ -42,6 +41,11 @@ class DashboardScreen extends StatelessWidget {
                       const SizedBox(height: 24),
                       _buildMetricCards(provider),
                       const SizedBox(height: 24),
+                      if (provider.healthKitConnected && provider.heartRate != null)
+                        ...[
+                          _buildHeartRateCard(provider),
+                          const SizedBox(height: 24),
+                        ],
                       _buildGoalSection(provider),
                       const SizedBox(height: 24),
                       WeeklyChart(weeklyStats: provider.weeklyStats),
@@ -254,6 +258,87 @@ class DashboardScreen extends StatelessWidget {
     );
   }
 
+  Widget _buildHeartRateCard(DashboardProvider provider) {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: [Color(0xFF2A1A1A), Color(0xFF1E1E1E)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: Colors.redAccent.withAlpha(40),
+          width: 1,
+        ),
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Colors.redAccent.withAlpha(25),
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: const Icon(
+              Icons.favorite_rounded,
+              color: Colors.redAccent,
+              size: 28,
+            ),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'HEART RATE',
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
+                    color: AppTheme.textSecondary,
+                    letterSpacing: 1.5,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text(
+                      provider.heartRate!.toStringAsFixed(0),
+                      style: const TextStyle(
+                        fontSize: 32,
+                        fontWeight: FontWeight.w800,
+                        color: Colors.redAccent,
+                      ),
+                    ),
+                    const Padding(
+                      padding: EdgeInsets.only(bottom: 4, left: 4),
+                      child: Text(
+                        'BPM',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          color: AppTheme.textSecondary,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          const Icon(
+            Icons.monitor_heart_rounded,
+            color: Colors.redAccent,
+            size: 32,
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildGoalSection(DashboardProvider provider) {
     return Container(
       padding: const EdgeInsets.all(20),
@@ -284,21 +369,21 @@ class DashboardScreen extends StatelessWidget {
           _buildGoalRow(
             'Steps',
             provider.todayStats.steps,
-            AppConstants.dailyStepGoal,
+            provider.stepGoal,
             const [Color(0xFF39FF14), Color(0xFF00E676)],
           ),
           const SizedBox(height: 16),
           _buildGoalRow(
             'Distance',
             (provider.todayStats.distanceMeters / 10).round(),
-            (AppConstants.dailyDistanceGoalKm * 100).round(),
+            (provider.distanceGoalKm * 100).round(),
             const [Color(0xFF00BFA5), Color(0xFF64FFDA)],
           ),
           const SizedBox(height: 16),
           _buildGoalRow(
             'Calories',
             provider.todayStats.caloriesBurned.round(),
-            AppConstants.dailyCalorieGoal.round(),
+            provider.calorieGoal.round(),
             const [Color(0xFFFF6D00), Color(0xFFFF9100)],
           ),
         ],

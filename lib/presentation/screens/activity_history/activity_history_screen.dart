@@ -80,11 +80,24 @@ class ActivityHistoryScreen extends StatelessWidget {
             return Padding(
               padding: const EdgeInsets.only(right: 8),
               child: FilterChip(
-                label: Text(_filterLabel(filter)),
+                label: Text(
+                  _filterLabel(filter),
+                  style: TextStyle(
+                    color: isSelected ? AppTheme.primaryColor : AppTheme.textSecondary,
+                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+                  ),
+                ),
                 selected: isSelected,
                 onSelected: (_) => provider.setFilter(filter),
-                selectedColor: AppTheme.primaryColor.withAlpha(50),
+                selectedColor: AppTheme.primaryColor.withAlpha(30),
+                backgroundColor: AppTheme.cardColor,
                 checkmarkColor: AppTheme.primaryColor,
+                side: BorderSide(
+                  color: isSelected ? AppTheme.primaryColor.withAlpha(80) : AppTheme.dividerColor,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ),
             );
           }).toList(),
@@ -186,6 +199,7 @@ class ActivityHistoryScreen extends StatelessWidget {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
+      backgroundColor: AppTheme.surfaceColor,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
