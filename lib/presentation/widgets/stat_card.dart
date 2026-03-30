@@ -7,6 +7,7 @@ class StatCard extends StatelessWidget {
   final IconData icon;
   final Color? iconColor;
   final double? progress;
+  final List<Color>? gradientColors;
 
   const StatCard({
     super.key,
@@ -15,67 +16,96 @@ class StatCard extends StatelessWidget {
     required this.icon,
     this.iconColor,
     this.progress,
+    this.gradientColors,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(
+    final color = iconColor ?? AppTheme.primaryColor;
+    final colors = gradientColors ?? [color, color.withAlpha(180)];
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppTheme.cardColor,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppTheme.dividerColor, width: 1),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(6),
+                decoration: BoxDecoration(
+                  color: color.withAlpha(25),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(
                   icon,
-                  color: iconColor ?? AppTheme.primaryColor,
-                  size: 28,
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  title,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    color: AppTheme.textSecondary,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            Text(
-              value,
-              style: const TextStyle(
-                fontSize: 28,
-                fontWeight: FontWeight.bold,
-                color: AppTheme.textPrimary,
-              ),
-            ),
-            if (progress != null) ...[
-              const SizedBox(height: 8),
-              ClipRRect(
-                borderRadius: BorderRadius.circular(4),
-                child: LinearProgressIndicator(
-                  value: progress!.clamp(0.0, 1.0),
-                  backgroundColor: Colors.grey[200],
-                  valueColor: AlwaysStoppedAnimation<Color>(
-                    iconColor ?? AppTheme.primaryColor,
-                  ),
-                  minHeight: 6,
+                  color: color,
+                  size: 20,
                 ),
               ),
-              const SizedBox(height: 4),
+              const SizedBox(width: 8),
               Text(
-                '${(progress! * 100).clamp(0, 100).toStringAsFixed(0)}%',
+                title,
                 style: const TextStyle(
-                  fontSize: 12,
+                  fontSize: 13,
                   color: AppTheme.textSecondary,
+                  fontWeight: FontWeight.w500,
                 ),
               ),
             ],
+          ),
+          const SizedBox(height: 12),
+          Text(
+            value,
+            style: const TextStyle(
+              fontSize: 26,
+              fontWeight: FontWeight.w800,
+              color: AppTheme.textPrimary,
+              letterSpacing: -0.5,
+            ),
+          ),
+          if (progress != null) ...[
+            const SizedBox(height: 10),
+            Container(
+              height: 5,
+              decoration: BoxDecoration(
+                color: AppTheme.cardColorLight,
+                borderRadius: BorderRadius.circular(3),
+              ),
+              child: FractionallySizedBox(
+                alignment: Alignment.centerLeft,
+                widthFactor: progress!.clamp(0.0, 1.0),
+                child: Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(colors: colors),
+                    borderRadius: BorderRadius.circular(3),
+                    boxShadow: [
+                      BoxShadow(
+                        color: colors[0].withAlpha(80),
+                        blurRadius: 4,
+                        offset: const Offset(0, 1),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 6),
+            Text(
+              '${(progress! * 100).clamp(0, 100).toStringAsFixed(0)}%',
+              style: TextStyle(
+                fontSize: 12,
+                color: color,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
           ],
-        ),
+        ],
       ),
     );
   }

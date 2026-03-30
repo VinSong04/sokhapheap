@@ -25,7 +25,7 @@ class RunTrackerApp extends StatelessWidget {
       ],
       child: MaterialApp(
         title: AppConstants.appName,
-        theme: AppTheme.lightTheme,
+        theme: AppTheme.darkTheme,
         debugShowCheckedModeBanner: false,
         home: const HomeScreen(),
       ),
