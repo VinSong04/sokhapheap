@@ -13,9 +13,10 @@ class ActivityHistoryScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Activity History'),
+        backgroundColor: AppTheme.backgroundColor,
         actions: [
           IconButton(
-            icon: const Icon(Icons.refresh),
+            icon: const Icon(Icons.refresh_rounded, color: AppTheme.textSecondary),
             onPressed: () {
               context.read<ActivityHistoryProvider>().refresh();
             },
@@ -25,7 +26,9 @@ class ActivityHistoryScreen extends StatelessWidget {
       body: Consumer<ActivityHistoryProvider>(
         builder: (context, provider, child) {
           if (provider.isLoading) {
-            return const Center(child: CircularProgressIndicator());
+            return const Center(
+              child: CircularProgressIndicator(color: AppTheme.primaryColor),
+            );
           }
 
           return Column(
@@ -38,7 +41,9 @@ class ActivityHistoryScreen extends StatelessWidget {
                     : RefreshIndicator(
                         onRefresh: provider.refresh,
                         child: ListView.builder(
-                          padding: const EdgeInsets.only(bottom: 16),
+                          padding: EdgeInsets.only(
+                            bottom: MediaQuery.of(context).padding.bottom + 16,
+                          ),
                           itemCount: provider.activities.length,
                           itemBuilder: (context, index) {
                             return ActivityListTile(
@@ -150,7 +155,7 @@ class ActivityHistoryScreen extends StatelessWidget {
           Icon(
             Icons.directions_run,
             size: 80,
-            color: Colors.grey[300],
+            color: AppTheme.textTertiary,
           ),
           const SizedBox(height: 16),
           const Text(
@@ -201,7 +206,7 @@ class ActivityHistoryScreen extends StatelessWidget {
                     width: 40,
                     height: 4,
                     decoration: BoxDecoration(
-                      color: Colors.grey[300],
+                      color: AppTheme.textTertiary,
                       borderRadius: BorderRadius.circular(2),
                     ),
                   ),
@@ -212,6 +217,7 @@ class ActivityHistoryScreen extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
+                    color: AppTheme.textPrimary,
                   ),
                 ),
                 const SizedBox(height: 16),

@@ -27,8 +27,10 @@ class _LiveMapScreenState extends State<LiveMapScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
         title: const Text('Live Run'),
+        backgroundColor: AppTheme.backgroundColor.withAlpha(200),
       ),
       body: Consumer<RunningProvider>(
         builder: (context, provider, child) {
@@ -91,19 +93,17 @@ class _LiveMapScreenState extends State<LiveMapScreen> {
   }
 
   Widget _buildControlPanel(BuildContext context, RunningProvider provider) {
+    final bottomPadding = MediaQuery.of(context).padding.bottom;
+
     return Container(
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black12,
-            blurRadius: 10,
-            offset: Offset(0, -2),
-          ),
-        ],
+      decoration: BoxDecoration(
+        color: AppTheme.surfaceColor,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+        border: Border(
+          top: BorderSide(color: AppTheme.dividerColor, width: 1),
+        ),
       ),
-      padding: const EdgeInsets.all(20),
+      padding: EdgeInsets.fromLTRB(20, 16, 20, bottomPadding + 16),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -111,7 +111,7 @@ class _LiveMapScreenState extends State<LiveMapScreen> {
             width: 40,
             height: 4,
             decoration: BoxDecoration(
-              color: Colors.grey[300],
+              color: AppTheme.textTertiary,
               borderRadius: BorderRadius.circular(2),
             ),
           ),
@@ -195,7 +195,7 @@ class _LiveMapScreenState extends State<LiveMapScreen> {
           ),
           style: ElevatedButton.styleFrom(
             backgroundColor: AppTheme.primaryColor,
-            foregroundColor: Colors.white,
+            foregroundColor: AppTheme.backgroundColor,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(16),
             ),
